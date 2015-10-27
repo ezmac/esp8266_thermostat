@@ -72,6 +72,7 @@ function Thermostat:tick()
   self.state= self:getState()
 end
 function Thermostat:toJSON()
+  self:getTemp()
   print("Json encoding")
   local jsonout = json.encode(self)
   print(jsonout)
