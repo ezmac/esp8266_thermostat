@@ -85,13 +85,16 @@ srv:listen(80,function(conn)
             --print("Response part end")
           --end
           body = string.sub(request,(contentLength*-1))
+          print("Got this json")
+          print(body)
           jsonBody = json.decode(body)
           if(jsonBody['ideal_temperature'] ~= nil) then
             t.ideal_temperature = jsonBody['ideal_temperature']
-          end
-          if(jsonBody['ideal_temperature'] ~= nil) then
-            t.ideal_temperature = jsonBody['ideal_temperature']
             t:tick()
+          end
+          if(jsonBody['interval'] ~= nil) then
+            print("Got an interval")
+            t:setInterval(jsonBody['interval'])
           end
 
         else

@@ -1,19 +1,11 @@
 json=require "cjson"
 
 Thermostat = {}
-function Thermostat:new(o,temperature_gpio_pin, ideal_temperature, interval)
-  o = o or {}
-  setmetatable(o, self)
-  self.__index = self
-  self.temperature_gpio_pin = temperature_gpio_pin
-  self.temp = 70
-  self.ideal_temperature = ideal_temperature or 70
-  self.state="off"
-  self.interval = interval or 1200000 -- 12 seconds
-  --self.interval = interval or 1200000000 -- 10 minute default
-  gpio.mode(self.temperature_gpio_pin,gpio.OUTPUT)
+function Thermostat:setInterval(i)
+  self.interval = i
+  print("setting interval to "..self.interval)
+  tmr.stop(0)
   tmr.alarm(0,self.interval, 1, function() t:tick() end)
-  return o
 end
 function Thermostat:on()
     gpio.write(self.temperature_gpio_pin, gpio.HIGH)
@@ -24,6 +16,20 @@ function Thermostat:off()
     gpio.write(self.temperature_gpio_pin, gpio.LOW)
     self.state = "off"
     print("off Wait")
+end
+function Thermostat:new(o,temperature_gpio_pin, ideal_temperature, interval)
+  o = o or {}
+  setmetatable(o, self)
+  self.__index = self
+  self.temperature_gpio_pin = temperature_gpio_pin
+  self.temp = 70
+  self.ideal_temperature = ideal_temperature or 70
+  self.state="off"
+  self.interval = interval or 12000000 -- 12 seconds
+  self:setInterval(self.interval)
+  --self.interval = interval or 1200000000 -- 10 minute default
+  gpio.mode(self.temperature_gpio_pin,gpio.OUTPUT)
+  return o
 end
 function Thermostat:print_ideal_temp()
   print(self.ideal_temperature)
